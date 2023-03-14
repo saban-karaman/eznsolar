@@ -26,7 +26,7 @@ function ürün({ _id, name, category, price, description, image, countInStock, 
   return (
 
     <div className="single-product-item text-center" key={_id}>
-      <Link legacyBehavior href={{ pathname: '/products/product',query: { id: `${_id}`},}} >
+      <Link legacyBehavior href={{ pathname: '/product',query: { id: `${_id}`},}} >
         <div>
           <div className="img-holder">
             <img src={image} alt="Awesome Product Image1" />
