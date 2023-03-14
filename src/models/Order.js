@@ -15,7 +15,7 @@ const orderList = new mongoose.Schema({
             type: String,
         },
         product: {
-            type: Number,
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Product',
             required: true
         },
@@ -29,12 +29,14 @@ const orderList = new mongoose.Schema({
         ad: { type: String, required: true },
         soyad: { type: String, required: true },
         email: { type: String, required: true },
-        tel: { type: String, required: true }
+        tel: { type: String, required: true },
+        tc: { type: Number, required: true },
+        vergiDaire: { type: String }
     },
     shippingAddress: {
         address: { type: String, required: true },
         city: { type: String, required: true },
-        country: { type: String, required: true }
+        district: { type: String, required: true }
     },
     shippingPrice: {
         type: Number,
@@ -57,7 +59,7 @@ const orderList = new mongoose.Schema({
         default: false,
     },
     paidAt: {
-        type: String,
+        type: Date,
     },
 })
 
