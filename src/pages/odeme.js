@@ -107,12 +107,12 @@ function Odeme() {
   }
 
   function handleChecked(e) {
-    if(checked===false){
+    if (checked === false) {
       setChecked(true)
     } else {
       setChecked(false)
     }
-    
+
   }
   return (
     <Layout>
@@ -250,7 +250,7 @@ function Odeme() {
                   </div>
                   <form>
                     <div className="row">
-                      
+
                       <div className="col-md-6">
                         <div className="field-label">Ad*</div>
                         <div className="field-input">
@@ -281,7 +281,7 @@ function Odeme() {
                           <input type="text" required name="address" placeholder="" value={address} onChange={(event) => setAddress(event.target.value)} />
                         </div>
                       </div>
-                      
+
                       <div className="col-md-6">
                         <div className="field-label">İl*</div>
                         <div className="field-input">
@@ -292,8 +292,8 @@ function Odeme() {
                             ))}
                           </select>
                         </div>
-                        </div>
-                        <div className="col-md-6">
+                      </div>
+                      <div className="col-md-6">
                         <div className="field-label">İlçe*</div>
                         <div className="field-input">
                           {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
@@ -304,7 +304,7 @@ function Odeme() {
                             ))}
                           </select>
                         </div>
-                        </div>
+                      </div>
                       <div className="col-md-12">
                         <div className="field-label">İletişim*</div>
                         <div className="field-input">
@@ -320,7 +320,7 @@ function Odeme() {
                       <div className="col-md-12">
                         <div className="field-input">
                           <input
-                          required
+                            required
                             type="text"
                             name="tel"
                             placeholder="Telefon Numarası"
@@ -332,7 +332,7 @@ function Odeme() {
                         <div className="create-acc">
                           <div className="checkbox">
                             <label>
-                              <input type="checkbox" name="ship-address"  onChange={handleChecked}/>
+                              <input type="checkbox" name="ship-address" onChange={handleChecked} />
                               <span> <Link href={"/kvkk"}>Mesafeli Satış Sözleşmesini</Link> okudum, kabul ediyorum.</span>
                             </label>
                           </div>
@@ -340,14 +340,18 @@ function Odeme() {
                       </div>
                       {
                         (!ad || !soyad || !tc || !address || !city || !districts || !email || !tel || !checked) ?
-                            <p>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p> :
-                        
-                         <button className="btn-three" onClick={checkoutSession} >
-                        ÖDEME YAP
-                        <span className="icon-null" />
-                      </button>
+                          <div><p style={{color:"red"}}>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p>
+                            <button className="btn-three" disabled={true}>
+                              ÖDEME YAP
+                              <span className="icon-null" />
+                            </button></div> :
+
+                          <button className="btn-three" onClick={checkoutSession} >
+                            ÖDEME YAP
+                            <span className="icon-null" />
+                          </button>
                       }
-                     
+
                     </div>
                   </form>
                 </div>
