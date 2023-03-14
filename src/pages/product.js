@@ -17,11 +17,10 @@ function Products() {
 
 
   return (
-    <Layout>
-    {product && 
+    <Layout> 
     <ProductDetails
       product={product[0]}
-    />}
+    />
     </Layout>
   )
 }

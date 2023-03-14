@@ -72,20 +72,20 @@ function ProductDetails({product}) {
                                         <div className="col-lg-6">
                                             <div className="single-product-image-holder">
                                                 <img
-                                                    src={product.image}
+                                                    src={(product && product.image) ? product.image : ""}
                                                     alt="Awesome Image"
                                                 />
                                             </div>
                                         </div>
                                         <div className="col-lg-6">
                                             <div className="content-box">    
-                                                <p >{(product.price).toFixed(2)} $</p>                
-                                                <span className="price">{(product.price*dolar).toFixed(2)} ₺</span>
-                                                <h2>{product.name}</h2>
+                                                <p >{(product && product.price) ? (product.price).toFixed(2): 0} $</p>                
+                                                <span className="price">{(product && product.price) ? (product.price*dolar).toFixed(2) : 0} ₺</span>
+                                                <h2>{(product && product.name) ? (product.name): ""}</h2>
 
                                                 <div className="text">
                                                     <p>
-                                                        {product.description}
+                                                        {(product && product.description) ? (product.description): ""}
                                                     </p>
                                                 </div>
 
@@ -127,7 +127,7 @@ function ProductDetails({product}) {
                                                     <div className="product-details-content">
                                                         <div className="desc-content-box">
                                                             <p>
-                                                                {product.detail}
+                                                                {(product && product.detail) ? (product.detail): ""}
                                                             </p>
                                                         </div>
                                                     </div>
