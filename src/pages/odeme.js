@@ -26,7 +26,7 @@ function Odeme() {
   const items = useSelector(selectItems);
   const total = Number(useSelector(selectTotal));
   const [checked, setChecked] = useState(false)
-
+  const [checkedTeslimat, setCheckedTeslimat] = useState(false)
 
   useEffect(() => {
     async function fetchCities() {
@@ -107,12 +107,21 @@ function Odeme() {
   }
 
   function handleChecked(e) {
-    if(checked===false){
+    if (checked === false) {
       setChecked(true)
     } else {
       setChecked(false)
     }
-    
+
+  }
+
+  function handleCheckedTeslimat(e) {
+    if (checkedTeslimat === false) {
+      setCheckedTeslimat(true)
+    } else {
+      setCheckedTeslimat(false)
+    }
+
   }
   return (
     <Layout>
@@ -250,7 +259,7 @@ function Odeme() {
                   </div>
                   <form>
                     <div className="row">
-                      
+
                       <div className="col-md-6">
                         <div className="field-label">Ad*</div>
                         <div className="field-input">
@@ -281,7 +290,7 @@ function Odeme() {
                           <input type="text" required name="address" placeholder="" value={address} onChange={(event) => setAddress(event.target.value)} />
                         </div>
                       </div>
-                      
+
                       <div className="col-md-6">
                         <div className="field-label">İl*</div>
                         <div className="field-input">
@@ -292,8 +301,8 @@ function Odeme() {
                             ))}
                           </select>
                         </div>
-                        </div>
-                        <div className="col-md-6">
+                      </div>
+                      <div className="col-md-6">
                         <div className="field-label">İlçe*</div>
                         <div className="field-input">
                           {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
@@ -304,7 +313,7 @@ function Odeme() {
                             ))}
                           </select>
                         </div>
-                        </div>
+                      </div>
                       <div className="col-md-12">
                         <div className="field-label">İletişim*</div>
                         <div className="field-input">
@@ -320,7 +329,7 @@ function Odeme() {
                       <div className="col-md-12">
                         <div className="field-input">
                           <input
-                          required
+                            required
                             type="text"
                             name="tel"
                             placeholder="Telefon Numarası"
@@ -332,7 +341,7 @@ function Odeme() {
                         <div className="create-acc">
                           <div className="checkbox">
                             <label>
-                              <input type="checkbox" name="ship-address"  onChange={handleChecked}/>
+                              <input type="checkbox" name="ship-address" onChange={handleChecked} />
                               <span> <Link href={"/kvkk"}>Mesafeli Satış Sözleşmesini</Link> okudum, kabul ediyorum.</span>
                             </label>
                           </div>
@@ -340,14 +349,14 @@ function Odeme() {
                       </div>
                       {
                         (!ad || !soyad || !tc || !address || !city || !districts || !email || !tel || !checked) ?
-                            <p>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p> :
-                        
-                         <button className="btn-three" onClick={checkoutSession} >
-                        ÖDEME YAP
-                        <span className="icon-null" />
-                      </button>
+                          <p>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p> :
+
+                          <button className="btn-three" onClick={checkoutSession} >
+                            ÖDEME YAP
+                            <span className="icon-null" />
+                          </button>
                       }
-                     
+
                     </div>
                   </form>
                 </div>
@@ -357,58 +366,57 @@ function Odeme() {
                   <div className="shop-title-box">
                     <h3>
                       Teslimat Adresi Farklı Olsun
-                      <input type="checkbox" />
+                      <input type="checkbox" onChange={handleCheckedTeslimat} />
                     </h3>
                   </div>
-                  <form method="post" action="checkout.html">
-                    <div className="row">
-                      <div className="col-md-12">
-                        <div className="field-label">Ülke*</div>
+                  {checkedTeslimat ?
+                    <form method="post" action="checkout.html">
+                      <div className="row">
+                        
+                        <div className="col-md-6">
+                          <div className="field-label">Ad*</div>
+                          <div className="field-input">
+                            <input type="text" name="fname" placeholder="" />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="field-label">Soyad*</div>
+                          <div className="field-input">
+                            <input type="text" name="lname" placeholder="" />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="field-label">Adres*</div>
+                          <div className="field-input">
+                            <input type="text" name="address" placeholder="" />
+                          </div>
+                        </div>                      
+                        <div className="col-md-6">
+                        <div className="field-label">İl*</div>
                         <div className="field-input">
-                          <input type="text" name="country" placeholder="" />
+                          <select id="city" value={selectedCity} onChange={handleCityChange}>
+                            <option value="">Seçiniz</option>
+                            {cities.map((city, i) => (
+                              <option key={i} value={city}>{city}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                       <div className="col-md-6">
-                        <div className="field-label">Ad*</div>
+                        <div className="field-label">İlçe*</div>
                         <div className="field-input">
-                          <input type="text" name="fname" placeholder="" />
+                          {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
+                          <select id="district" value={selectedDistrict} onChange={handleDistrictChange}>
+                            <option value="">Seçiniz</option>
+                            {districts.map((city, i) => (
+                              <option key={i} value={city}>{city}</option>
+                            ))}
+                          </select>
                         </div>
+                      </div>                        
                       </div>
-                      <div className="col-md-6">
-                        <div className="field-label">Soyad*</div>
-                        <div className="field-input">
-                          <input type="text" name="lname" placeholder="" />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-label">Adres*</div>
-                        <div className="field-input">
-                          <input type="text" name="address" placeholder="" />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-input">
-                          <input type="text" name="address" placeholder="" />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-label">Şehir*</div>
-                        <div className="field-input">
-                          <input type="text" name="town-selectedCity" placeholder="" />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-label">Notlar</div>
-                        <div className="field-input">
-                          <textarea
-                            name="other-notes"
-                            placeholder="Siparişiniz için ek notlar..."
-                            defaultValue={""}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </form>
+                    </form> : ""
+                  }
                 </div>
               </div>
             </div>
