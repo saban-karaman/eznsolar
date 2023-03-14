@@ -332,7 +332,7 @@ function Odeme() {
                         <div className="create-acc">
                           <div className="checkbox">
                             <label>
-                              <input type="checkbox" name="ship-same-address"  onChange={handleChecked}/>
+                              <input type="checkbox" name="ship-address"  onChange={handleChecked}/>
                               <span> <Link href={"/kvkk"}>Mesafeli Satış Sözleşmesini</Link> okudum, kabul ediyorum.</span>
                             </label>
                           </div>
