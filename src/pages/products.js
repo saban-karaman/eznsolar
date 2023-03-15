@@ -1,21 +1,14 @@
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import ProductsShow from "../../components/ProductsShow";
-// import { selectAllProducts } from '@/GlobalRedux/basket/basketSlice'
-// import { useSelector } from 'react-redux'
+import ProductsShow from "../components/ProductsShow";
 
 
-// async function getCurrencyRate() {
-//   return await (await fetch(`https://api.genelpara.com/embed/doviz.json`, { cache: 'force-cache' })).json()
-
-// }
 
 
-function Products() {
-  // const ürünler = useSelector(selectAllProducts)
+function Products({data}) {
+ 
 
-
-  // const döviz = await getCurrencyRate();
+const dolar = data.USD.satis
 
   return (
     <Layout>
@@ -51,7 +44,7 @@ function Products() {
         {/*Start Shop area*/}
         <ProductsShow
           // ürünler={ürünler}
-        // dolar={dolar}
+        dolar={dolar}
         />
         {/*End Shop area*/}
 
@@ -60,6 +53,13 @@ function Products() {
   )
 }
 
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const res = await fetch(`https://api.genelpara.com/embed/doviz.json`)
+  const data = await res.json()
 
+  // Pass data to the page via props
+  return { props: { data } }
+}
 
 export default Products

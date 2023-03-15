@@ -126,7 +126,7 @@ function Odeme() {
   return (
     <Layout>
       <div className="boxed_wrapper">
-        <div />
+
         {/*Start breadcrumb area*/}
         <section
           className="breadcrumb-area"
@@ -173,6 +173,7 @@ function Odeme() {
                           <th className="price">Toplam</th>
                         </tr>
                       </thead>
+                      
                       {items.map((item, i) => (
                         <OdemeDetails
                           key={i}
@@ -190,179 +191,115 @@ function Odeme() {
                         />
                       ))}
                     </table>
+                    {items.length===0 && <h3 style={{padding:"20px"}}>Sepetinizde ürün bulunmamaktadır</h3>}
                   </div>
+                  <div className="cart-total">
+                  <div className="shop-title-box">
+                    <h3>Sepet</h3>
+                  </div>
+                  <ul className="cart-total-table">
+                    <li className="clearfix">
+                      <span className="col col-title">Sepet Ara Toplam</span>
+                      <span className="col">{total.toFixed(2)} ₺</span>
+                    </li>
+                    <li className="clearfix">
+                      <span className="col col-title">Kargo</span>
+                      <span className="col">{total.toFixed(2) > 1000 ? 0 : 100} ₺</span>
+                    </li>
+                    <li className="clearfix">
+                      <span className="col col-title">Toplam</span>
+                      <span className="col">{total.toFixed(2) > 1000 ? (total.toFixed(2)) : (Number(total.toFixed(2)) + 100)} ₺</span>
+                    </li>
+                  </ul>
+                
+                </div>
                 </div>
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                  <div className="cart-total">
+                  <div className="form billing-info">
                     <div className="shop-title-box">
-                      <h3>Sepet</h3>
+                      <h3>Fatura Adresi</h3>
                     </div>
-                    <ul className="cart-total-table">
-                      <li className="clearfix">
-                        <span className="col col-title">Sepet Ara Toplam</span>
-                        <span className="col">{total.toFixed(2)} ₺</span>
-                      </li>
-                      <li className="clearfix">
-                        <span className="col col-title">Kargo</span>
-                        <span className="col">{total.toFixed(2) > 1000 ? 0 : 100} ₺</span>
-                      </li>
-                      <li className="clearfix">
-                        <span className="col col-title">Toplam</span>
-                        <span className="col">{total.toFixed(2) > 1000 ? (total.toFixed(2)) : (Number(total.toFixed(2)) + 100)} ₺</span>
-                      </li>
-                    </ul>
-                    <div className="payment-options">
-                      <div className="option-block">
-                        <div className="checkbox">
-                          <label>
-                            <input name="pay-us" type="checkbox" />
-                            <span>Direct Bank Transfer</span>
-                          </label>
-                        </div>
-                        <div className="text">
-                          <p>
-                            Please send a check to Store Name, Store Street, Store
-                            Town, Store State / County, Store Postcode.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="option-block">
-                        <div className="radio-block">
-                          <div className="checkbox">
-                            <label>
-                              <input name="pay-us" type="checkbox" />
-                              <span>
-                                Paypal <b>What is Paypal</b>
-                              </span>
-                            </label>
+                    <form>
+                      <div className="row">
+
+                        <div className="col-md-6">
+                          <div className="field-label">Ad*</div>
+                          <div className="field-input">
+                            <input type="text" name="ad" required placeholder="" value={ad} onChange={(event) => setAd(event.target.value)} />
                           </div>
                         </div>
-                      </div>
-                      <div className="placeorder-button text-left">
-                        <button className="btn-three" type="submit" >
-                          Place Order
-                          <span className="icon-null" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="container">
-            <div className="row">
-              <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                <div className="form billing-info">
-                  <div className="shop-title-box">
-                    <h3>Fatura Adresi</h3>
-                  </div>
-                  <form>
-                    <div className="row">
-
-                      <div className="col-md-6">
-                        <div className="field-label">Ad*</div>
-                        <div className="field-input">
-                          <input type="text" name="ad" required placeholder="" value={ad} onChange={(event) => setAd(event.target.value)} />
-                        </div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="field-label">Soyad*</div>
-                        <div className="field-input">
-                          <input type="text" name="soyad" required placeholder="" value={soyad} onChange={(event) => setSoyad(event.target.value)} />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-label">TC Kimlik No veya Vergi No*</div>
-                        <div className="field-input">
-                          <input type="text" name="tcNo" required placeholder="" value={tc} onChange={(event) => setTc(event.target.value)} />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-label">Vergi Dairesi</div>
-                        <div className="field-input">
-                          <input type="text" name="vergiDairesi" placeholder="" value={vergiDaire} onChange={(event) => setVergiDaire(event.target.value)} />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-label">Adres*</div>
-                        <div className="field-input">
-                          <input type="text" required name="address" placeholder="" value={address} onChange={(event) => setAddress(event.target.value)} />
-                        </div>
-                      </div>
-
-                      <div className="col-md-6">
-                        <div className="field-label">İl*</div>
-                        <div className="field-input">
-                          <select id="city" value={selectedCity} onChange={handleCityChange}>
-                            <option value="">Seçiniz</option>
-                            {cities.map((city, i) => (
-                              <option key={i} value={city}>{city}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="field-label">İlçe*</div>
-                        <div className="field-input">
-                          {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
-                          <select id="district" value={selectedDistrict} onChange={handleDistrictChange}>
-                            <option value="">Seçiniz</option>
-                            {districts.map((city, i) => (
-                              <option key={i} value={city}>{city}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-label">İletişim*</div>
-                        <div className="field-input">
-                          <input
-                            required
-                            type="text"
-                            name="email"
-                            placeholder="Email Adresi"
-                            value={email} onChange={(event) => setEmail(event.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="field-input">
-                          <input
-                            required
-                            type="text"
-                            name="tel"
-                            placeholder="Telefon Numarası"
-                            value={tel} onChange={(event) => setTel(event.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div className="create-acc">
-                          <div className="checkbox">
-                            <label>
-                              <input type="checkbox" name="ship-address" onChange={handleChecked} />
-                              <span> <Link href={"/kvkk"}>Mesafeli Satış Sözleşmesini</Link> okudum, kabul ediyorum.</span>
-                            </label>
+                        <div className="col-md-6">
+                          <div className="field-label">Soyad*</div>
+                          <div className="field-input">
+                            <input type="text" name="soyad" required placeholder="" value={soyad} onChange={(event) => setSoyad(event.target.value)} />
                           </div>
                         </div>
-                      </div>
-                      {
-                        (!ad || !soyad || !tc || !address || !city || !districts || !email || !tel || !checked) ?
-                          <p>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p> :
+                        <div className="col-md-12">
+                          <div className="field-label">TC Kimlik No veya Vergi No*</div>
+                          <div className="field-input">
+                            <input type="text" name="tcNo" required placeholder="" value={tc} onChange={(event) => setTc(event.target.value)} />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="field-label">Vergi Dairesi</div>
+                          <div className="field-input">
+                            <input type="text" name="vergiDairesi" placeholder="" value={vergiDaire} onChange={(event) => setVergiDaire(event.target.value)} />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="field-label">Adres*</div>
+                          <div className="field-input">
+                            <input type="text" required name="address" placeholder="" value={address} onChange={(event) => setAddress(event.target.value)} />
+                          </div>
+                        </div>
 
-                          <button className="btn-three" onClick={checkoutSession} >
-                            ÖDEME YAP
-                            <span className="icon-null" />
-                          </button>
-                      }
-
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                <div className="form shipping-info">
+                        <div className="col-md-6">
+                          <div className="field-label">İl*</div>
+                          <div className="field-input">
+                            <select id="city" value={selectedCity} onChange={handleCityChange}>
+                              <option value="">Seçiniz</option>
+                              {cities.map((city, i) => (
+                                <option key={i} value={city}>{city}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="field-label">İlçe*</div>
+                          <div className="field-input">
+                            {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
+                            <select id="district" value={selectedDistrict} onChange={handleDistrictChange}>
+                              <option value="">Seçiniz</option>
+                              {districts.map((city, i) => (
+                                <option key={i} value={city}>{city}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="field-label">İletişim*</div>
+                          <div className="field-input">
+                            <input
+                              required
+                              type="text"
+                              name="email"
+                              placeholder="Email Adresi"
+                              value={email} onChange={(event) => setEmail(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div className="field-input">
+                            <input
+                              required
+                              type="text"
+                              name="tel"
+                              placeholder="Telefon Numarası"
+                              value={tel} onChange={(event) => setTel(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="form shipping-info">
                   <div className="shop-title-box">
                     <h3>
                       Teslimat Adresi Farklı Olsun
@@ -372,7 +309,7 @@ function Odeme() {
                   {checkedTeslimat ?
                     <form method="post" action="checkout.html">
                       <div className="row">
-                        
+
                         <div className="col-md-6">
                           <div className="field-label">Ad*</div>
                           <div className="field-input">
@@ -390,36 +327,72 @@ function Odeme() {
                           <div className="field-input">
                             <input type="text" name="address" placeholder="" />
                           </div>
-                        </div>                      
+                        </div>
                         <div className="col-md-6">
-                        <div className="field-label">İl*</div>
-                        <div className="field-input">
-                          <select id="city" value={selectedCity} onChange={handleCityChange}>
-                            <option value="">Seçiniz</option>
-                            {cities.map((city, i) => (
-                              <option key={i} value={city}>{city}</option>
-                            ))}
-                          </select>
+                          <div className="field-label">İl*</div>
+                          <div className="field-input">
+                            <select id="city" value={selectedCity} onChange={handleCityChange}>
+                              <option value="">Seçiniz</option>
+                              {cities.map((city, i) => (
+                                <option key={i} value={city}>{city}</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="field-label">İlçe*</div>
-                        <div className="field-input">
-                          {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
-                          <select id="district" value={selectedDistrict} onChange={handleDistrictChange}>
-                            <option value="">Seçiniz</option>
-                            {districts.map((city, i) => (
-                              <option key={i} value={city}>{city}</option>
-                            ))}
-                          </select>
+                        <div className="col-md-6">
+                          <div className="field-label">İlçe*</div>
+                          <div className="field-input">
+                            {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
+                            <select id="district" value={selectedDistrict} onChange={handleDistrictChange}>
+                              <option value="">Seçiniz</option>
+                              {districts.map((city, i) => (
+                                <option key={i} value={city}>{city}</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
-                      </div>                        
                       </div>
                     </form> : ""
                   }
                 </div>
+
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
+          <div className="container">
+            
+              
+              <div className="text-center">
+               
+                <div className="col-md-12">
+                          <div className="create-acc">
+                            <div className="checkbox">
+                              <label>
+                                <input type="checkbox" name="ship-address" onChange={handleChecked} />
+                                <span> <Link href={"/kvkk"}>Mesafeli Satış Sözleşmesini</Link> okudum, kabul ediyorum.</span>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                        {
+                          (!ad || !soyad || !tc || !address || !city || !districts || !email || !tel || !checked) ?
+                            <div><p style={{ color: "red" }}>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p>
+                              <button className="btn-three" disabled={true}>
+                                ÖDEME YAP
+                                <span className="icon-null" />
+                              </button></div> :
+
+                            <button className="btn-three" onClick={checkoutSession} >
+                              ÖDEME YAP
+                              <span className="icon-null" />
+                            </button>
+                        }
+              </div>
+            
           </div>
         </section>
         {/*End Checkout area*/}
