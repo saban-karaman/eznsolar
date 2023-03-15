@@ -9,14 +9,14 @@ import { useSelector } from "react-redux";
 
 
 
-function ProductDetails({product}) {
+function ProductDetails({product, dolar}) {
     // const searchParams = useSearchParams();
 //   const urlValue = searchParams.get('id')
  const ürünler = useSelector(selectAllProducts)
     // const pro=ürünler.filter(item => (item._id === urlValue));
     // const product=pro[0];
     console.log("first",product)
-    const dolar = 19
+    // const dolar = 19
     // if(product===null){product=ürünler[0]}
     const related = ürünler.filter(item => ((item.subCategory === product.subCategory) && (item._id !== product._id)))
 

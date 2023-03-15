@@ -10,13 +10,13 @@ import { useSelector } from 'react-redux'
 
 
 
- function ProductsShow() {
+
+function ProductsShow({dolar}) {
   
   const ürünler = useSelector(selectAllProducts)
   const searchParams = useSearchParams();
   const urlValue = searchParams.get('category')
 
-  
  
  
   const fuse = new Fuse(ürünler, {
@@ -26,7 +26,7 @@ import { useSelector } from 'react-redux'
   })
  
 
-  const dolar = 19
+  // const dolar = 19
   const [initialQuery, setInitialQuery] = useState(urlValue || '');
 const [query, setQuery] = useState(initialQuery);
 
@@ -226,4 +226,14 @@ useEffect(() => {
   )
 }
 
+
+
+
+
+
+
+
 export default ProductsShow
+
+
+
