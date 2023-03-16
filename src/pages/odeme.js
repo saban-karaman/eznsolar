@@ -3,9 +3,12 @@ import Link from "next/link";
 import OdemeDetails from "../components/OdemeDetails";
 import { useDispatch, useSelector } from 'react-redux'
 import { selectItems, selectTotal } from '../GlobalRedux/basket/basketSlice'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import turkiye from "../lib/turkiye.json"
+import PayTRPayment from "./payTR";
+import Script from "next/script";
+import IframeResizer from "iframe-resizer-react";
 
 
 function Odeme() {
@@ -63,7 +66,6 @@ function Odeme() {
   const checkoutSession = async (e) => {
     e.preventDefault();
     try {
-
       const response = await axios.post(`api/orderList`, {
         orderItems: items.map((item) => ({
           product: item.product._id,
@@ -123,8 +125,39 @@ function Odeme() {
     }
 
   }
+
+  const onResized=(data)=>{console.log(data)};
+  const ref=useRef(null)
+  const [tokenPay,setTokenPay]=useState(null);
+
+  async function makePayment() {
+    const amount = items[0].quantity;
+    const customerName = ad;
+    const customerEmail = email;
+    const apiKey = 'your-api-key';
+
+    const response = await axios.post('https://www.paytr.com/odeme/api/get-token', {
+      merchant_id: apiKey,
+      amount,
+      customer_name: customerName,
+      customer_email: customerEmail,
+    });
+
+    const { token, redirect_url } = response.data;
+    console.log("first", token)
+    // Redirect to PayTR payment page
+    window.location.href = redirect_url;
+  }
+
+
   return (
     <Layout>
+      <div>
+        <Script
+          id="paytr-js"
+          src="https://www.paytr.com/js/iframeResizer.min.js" />
+      </div>
+
       <div className="boxed_wrapper">
 
         {/*Start breadcrumb area*/}
@@ -173,7 +206,7 @@ function Odeme() {
                           <th className="price">Toplam</th>
                         </tr>
                       </thead>
-                      
+
                       {items.map((item, i) => (
                         <OdemeDetails
                           key={i}
@@ -191,28 +224,28 @@ function Odeme() {
                         />
                       ))}
                     </table>
-                    {items.length===0 && <h3 style={{padding:"20px"}}>Sepetinizde ürün bulunmamaktadır</h3>}
+                    {items.length === 0 && <h3 style={{ padding: "20px" }}>Sepetinizde ürün bulunmamaktadır</h3>}
                   </div>
                   <div className="cart-total">
-                  <div className="shop-title-box">
-                    <h3>Sepet</h3>
+                    <div className="shop-title-box">
+                      <h3>Sepet</h3>
+                    </div>
+                    <ul className="cart-total-table">
+                      <li className="clearfix">
+                        <span className="col col-title">Sepet Ara Toplam</span>
+                        <span className="col">{total.toFixed(2)} ₺</span>
+                      </li>
+                      <li className="clearfix">
+                        <span className="col col-title">Kargo</span>
+                        <span className="col">{total.toFixed(2) > 1000 ? 0 : 100} ₺</span>
+                      </li>
+                      <li className="clearfix">
+                        <span className="col col-title">Toplam</span>
+                        <span className="col">{total.toFixed(2) > 1000 ? (total.toFixed(2)) : (Number(total.toFixed(2)) + 100)} ₺</span>
+                      </li>
+                    </ul>
+
                   </div>
-                  <ul className="cart-total-table">
-                    <li className="clearfix">
-                      <span className="col col-title">Sepet Ara Toplam</span>
-                      <span className="col">{total.toFixed(2)} ₺</span>
-                    </li>
-                    <li className="clearfix">
-                      <span className="col col-title">Kargo</span>
-                      <span className="col">{total.toFixed(2) > 1000 ? 0 : 100} ₺</span>
-                    </li>
-                    <li className="clearfix">
-                      <span className="col col-title">Toplam</span>
-                      <span className="col">{total.toFixed(2) > 1000 ? (total.toFixed(2)) : (Number(total.toFixed(2)) + 100)} ₺</span>
-                    </li>
-                  </ul>
-                
-                </div>
                 </div>
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div className="form billing-info">
@@ -300,61 +333,61 @@ function Odeme() {
                           </div>
                         </div>
                         <div className="form shipping-info">
-                  <div className="shop-title-box">
-                    <h3>
-                      Teslimat Adresi Farklı Olsun
-                      <input type="checkbox" onChange={handleCheckedTeslimat} />
-                    </h3>
-                  </div>
-                  {checkedTeslimat ?
-                    <form method="post" action="checkout.html">
-                      <div className="row">
+                          <div className="shop-title-box">
+                            <h3>
+                              Teslimat Adresi Farklı Olsun
+                              <input type="checkbox" onChange={handleCheckedTeslimat} />
+                            </h3>
+                          </div>
+                          {checkedTeslimat ?
+                            <form method="post" action="checkout.html">
+                              <div className="row">
 
-                        <div className="col-md-6">
-                          <div className="field-label">Ad*</div>
-                          <div className="field-input">
-                            <input type="text" name="fname" placeholder="" />
-                          </div>
+                                <div className="col-md-6">
+                                  <div className="field-label">Ad*</div>
+                                  <div className="field-input">
+                                    <input type="text" name="fname" placeholder="" />
+                                  </div>
+                                </div>
+                                <div className="col-md-6">
+                                  <div className="field-label">Soyad*</div>
+                                  <div className="field-input">
+                                    <input type="text" name="lname" placeholder="" />
+                                  </div>
+                                </div>
+                                <div className="col-md-12">
+                                  <div className="field-label">Adres*</div>
+                                  <div className="field-input">
+                                    <input type="text" name="address" placeholder="" />
+                                  </div>
+                                </div>
+                                <div className="col-md-6">
+                                  <div className="field-label">İl*</div>
+                                  <div className="field-input">
+                                    <select id="city" value={selectedCity} onChange={handleCityChange}>
+                                      <option value="">Seçiniz</option>
+                                      {cities.map((city, i) => (
+                                        <option key={i} value={city}>{city}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </div>
+                                <div className="col-md-6">
+                                  <div className="field-label">İlçe*</div>
+                                  <div className="field-input">
+                                    {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
+                                    <select id="district" value={selectedDistrict} onChange={handleDistrictChange}>
+                                      <option value="">Seçiniz</option>
+                                      {districts.map((city, i) => (
+                                        <option key={i} value={city}>{city}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            </form> : ""
+                          }
                         </div>
-                        <div className="col-md-6">
-                          <div className="field-label">Soyad*</div>
-                          <div className="field-input">
-                            <input type="text" name="lname" placeholder="" />
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="field-label">Adres*</div>
-                          <div className="field-input">
-                            <input type="text" name="address" placeholder="" />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="field-label">İl*</div>
-                          <div className="field-input">
-                            <select id="city" value={selectedCity} onChange={handleCityChange}>
-                              <option value="">Seçiniz</option>
-                              {cities.map((city, i) => (
-                                <option key={i} value={city}>{city}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="field-label">İlçe*</div>
-                          <div className="field-input">
-                            {/* <input type="text" name="selectedCity" placeholder="" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)} /> */}
-                            <select id="district" value={selectedDistrict} onChange={handleDistrictChange}>
-                              <option value="">Seçiniz</option>
-                              {districts.map((city, i) => (
-                                <option key={i} value={city}>{city}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    </form> : ""
-                  }
-                </div>
 
                       </div>
                     </form>
@@ -364,40 +397,56 @@ function Odeme() {
             </div>
           </div>
           <div className="container">
-            
-              
-              <div className="text-center">
-               
-                <div className="col-md-12">
-                          <div className="create-acc">
-                            <div className="checkbox">
-                              <label>
-                                <input type="checkbox" name="ship-address" onChange={handleChecked} />
-                                <span> <Link href={"/kvkk"}>Mesafeli Satış Sözleşmesini</Link> okudum, kabul ediyorum.</span>
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                        {
-                          (!ad || !soyad || !tc || !address || !city || !districts || !email || !tel || !checked) ?
-                            <div><p style={{ color: "red" }}>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p>
-                              <button className="btn-three" disabled={true}>
-                                ÖDEME YAP
-                                <span className="icon-null" />
-                              </button></div> :
 
-                            <button className="btn-three" onClick={checkoutSession} >
-                              ÖDEME YAP
-                              <span className="icon-null" />
-                            </button>
-                        }
+
+            <div className="text-center">
+
+              <div className="col-md-12">
+                <div className="create-acc">
+                  <div className="checkbox">
+                    <label>
+                      <input type="checkbox" name="ship-address" onChange={handleChecked} />
+                      <span> <Link href={"/kvkk"}>Mesafeli Satış Sözleşmesini</Link> okudum, kabul ediyorum.</span>
+                    </label>
+                  </div>
+                </div>
               </div>
-            
+              {
+                (!ad || !soyad || !tc || !address || !city || !districts || !email || !tel || !checked) ?
+                  <div><p style={{ color: "red" }}>Lütfen bütün alanları doldurunuz ve Sözleşmeyi işaretleyiniz</p>
+                    <button className="btn-three" disabled={true}>
+                      ÖDEME YAP
+                      <span className="icon-null" />
+                    </button></div> :
+
+                  <button className="btn-three" onClick={makePayment} >
+                    ÖDEME YAP
+                    <span className="icon-null" />
+                   < PayTRPayment />
+                  </button>
+              }
+            </div>
+
           </div>
         </section>
         {/*End Checkout area*/}
 
       </div>
+      {/* <div>
+        <iframe src="https://www.paytr.com/odeme/guvenli/iframe_token" id="paytriframe"  frameborder="0"
+        scrolling="no" style="width: 100%;"></iframe>
+     </div> */}
+        <div style={{ margin: '20px 0' }}>
+          <IframeResizer
+            log
+            inPageLinks
+            forwardRef={ref}
+            onResized={onResized}
+            src={`https://www.paytr.com/odeme/guvenli/${tokenPay}`}
+            width="100%"
+            scrolling="omit"
+          />
+        </div>
     </Layout>
   )
 }
