@@ -6,12 +6,17 @@ import { selectItems, selectTotal } from '../GlobalRedux/basket/basketSlice'
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import turkiye from "../lib/turkiye.json"
-import PayTRPayment from "./payTR";
-import Script from "next/script";
 import IframeResizer from "iframe-resizer-react";
+import nodeBase64 from 'nodejs-base64-converter';
+import crypto from 'crypto';
+import { useRouter } from "next/navigation";
 
 
-function Odeme() {
+
+function Odeme({ ip }) {
+  const [tokenPay, setTokenPay] = useState("");
+
+  const router = useRouter();
   // const dispatch = useDispatch()
   const [email, setEmail] = useState("");
   const [ad, setAd] = useState("");
@@ -125,38 +130,114 @@ function Odeme() {
     }
 
   }
+  const randomNumber = () => Math.trunc(Math.random() * 10);
 
-  const onResized=(data)=>{console.log(data)};
-  const ref=useRef(null)
-  const [tokenPay,setTokenPay]=useState(null);
+  const generateOrderId = ((item) => item.replace(/X/g, randomNumber));
+  const input = `EZN60XXXXXXX${tc + Date()}`
 
-  async function makePayment() {
-    const amount = items[0].quantity;
-    const customerName = ad;
-    const customerEmail = email;
-    const apiKey = 'your-api-key';
-
-    const response = await axios.post('https://www.paytr.com/odeme/api/get-token', {
-      merchant_id: apiKey,
-      amount,
-      customer_name: customerName,
-      customer_email: customerEmail,
-    });
-
-    const { token, redirect_url } = response.data;
-    console.log("first", token)
-    // Redirect to PayTR payment page
-    window.location.href = redirect_url;
+  async function getPaytrIframe() {
+    try {
+      const user_ip = ip;
+      const merchant_id = 342098;
+      const merchant_key = "eCKt71YGSWR6gKSk";
+      const payment_amount = parseInt((total * 100).toFixed(0));
+      const merchant_oid = generateOrderId(input);
+      const no_installment = 0;
+      const max_installment = 1;
+      const currency = "TL";
+      const test_mode = 1;
+      const merchant_salt = "Y9ByEeMMP1eUy12r";
+      let bask = [];
+      items.map((item) => {
+        bask.push([`${item.product.name}`, `${(item.product.price) * (item.dolar)}`, parseInt(`${item.quantity}`, 0)]);
+      })
+      const basket = JSON.stringify(bask);
+      const user_basket = nodeBase64.encode(basket);
+      const hashSTR = `${merchant_id}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}${no_installment}${max_installment}${currency}${test_mode}`;
+      const paytr_token = hashSTR + merchant_salt;
+      const token = crypto.createHmac("sha256", merchant_key).update(paytr_token).digest("base64");
+      const params = {
+        merchant_id: merchant_id,
+        merchant_key: merchant_key,
+        merchant_salt: merchant_salt,
+        email: email,
+        payment_amount: payment_amount,
+        merchant_oid: merchant_oid,
+        user_ip: user_ip,
+        user_phone: tel,
+        merchant_ok_url: "https://eznsolar.com/success",
+        merchant_fail_url: "https://eznsolar.com/fail",
+        user_basket: user_basket,
+        timeout_limit: 10,
+        debug_on: 1,
+        test_mode: 1,
+        lang: "tr",
+        no_installment: 0,
+        max_installment: 1,
+        currency: currency,
+        paytr_token: token
+      }
+      const data = Object.keys(params)
+        .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+        .join("&")
+      const response = await axios.post("https://www.paytr.com/odeme/api/get-token", data, {
+        headers:
+          { 'content-type': 'application/x-www-form-urlencoded' },
+      })
+      
+      setTokenPay(response.data.token);
+    } catch (error) {
+      console.log(error)
+      return { retcode: -10 }
+    }
   }
 
+  const handlePaymentClick = () => {
+    getPaytrIframe();
+  };
+
+
+  // async function verifyPay(req, res) {
+  //   var callback = req.body;
+  //   console.log("body", req.body);
+  //   const merchant_salt = "Y9ByEeMMP1eUy12r";
+  //   const merchant_key = "eCKt71YGSWR6gKSk";
+  //   const merchant_oid = generateOrderId(input);
+  //   const paytr_token = callback.merchant_oid + merchant_salt + callback.status + callback.total_amount;
+  //   var token = crypto.createHmac("sha256", merchant_key).update(paytr_token).digest("base64");
+  //   if (token != callback.hash) {
+  //     throw new Error("PAYTR notification failed: bad hash");
+  //   }
+
+  //   if (callback.status === 'success') {
+  //     router.push("/success");
+  //     // const data = await client.get(callback.merchant_oid)
+  //     // const parseD = JSON.parse(data);
+  //     // console.log(parseD)
+  //     // try {
+  //     //   if (parseD) {
+  //     //     const data = await this.create(parseD.ip, callback.merchant_oid, parseD.user, parseD.order);
+  //     //   }
+  //     //   client.remove(callback.merchant_oid)
+  //     // } catch (err) {
+
+  //     // }
+
+  //   } else {
+  //     router.push("/fail");
+  //     //basarisiz
+  //   }
+
+  //   res.send('OK');
+  // }
 
   return (
     <Layout>
-      <div>
+      {/* <div>
         <Script
           id="paytr-js"
           src="https://www.paytr.com/js/iframeResizer.min.js" />
-      </div>
+      </div> */}
 
       <div className="boxed_wrapper">
 
@@ -419,13 +500,21 @@ function Odeme() {
                       <span className="icon-null" />
                     </button></div> :
 
-                  <button className="btn-three" onClick={makePayment} >
+                  <button className="btn-three" onClick={handlePaymentClick} >
                     ÖDEME YAP
                     <span className="icon-null" />
-                   < PayTRPayment />
+                    
                   </button>
+                  
               }
             </div>
+            {tokenPay && (
+        <IframeResizer
+          src={`https://www.paytr.com/odeme/guvenli/${tokenPay}`}
+          width="100%"
+          scrolling="omit"
+        />
+      )}
 
           </div>
         </section>
@@ -435,8 +524,9 @@ function Odeme() {
       {/* <div>
         <iframe src="https://www.paytr.com/odeme/guvenli/iframe_token" id="paytriframe"  frameborder="0"
         scrolling="no" style="width: 100%;"></iframe>
-     </div> */}
-        <div style={{ margin: '20px 0' }}>
+     </div>
+      <div style={{ margin: '20px 0' }}>
+        <p>deneme</p>
           <IframeResizer
             log
             inPageLinks
@@ -446,9 +536,28 @@ function Odeme() {
             width="100%"
             scrolling="omit"
           />
-        </div>
+        </div> */}
     </Layout>
   )
 }
 
 export default Odeme
+
+export async function getServerSideProps(context) {
+  let ip;
+
+  const { req } = context;
+
+  if (req.headers['x-forwarded-for']) {
+    ip = req.headers['x-forwarded-for'].split(',')[0];
+  } else if (req.headers['x-real-ip']) {
+    ip = req.connection.remoteAddress;
+  } else {
+    ip = req.connection.remoteAddress;
+  }
+  return {
+    props: {
+      ip,
+    },
+  };
+}
