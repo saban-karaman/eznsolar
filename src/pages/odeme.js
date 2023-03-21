@@ -13,8 +13,12 @@ import { useRouter } from "next/navigation";
 
 
 
-function Odeme({ ip }) {
-  const [tokenPay, setTokenPay] = useState("");
+
+function Odeme({ip}) {
+  // const ip = req['headers']['x-tha-ip']
+  console.log("first", ip)
+ 
+  const [tokenPay, setTokenPay] = useState(null);
 
   const router = useRouter();
   // const dispatch = useDispatch()
@@ -175,17 +179,24 @@ function Odeme({ ip }) {
         no_installment: 0,
         max_installment: 1,
         currency: currency,
+        user_name: `${ad} ${soyad}`,
+        user_address: address,
         paytr_token: token
       }
-      const data = Object.keys(params)
-        .map((key) => `${key}=${encodeURIComponent(params[key])}`)
-        .join("&")
-      const response = await axios.post("https://www.paytr.com/odeme/api/get-token", data, {
+      // const data = Object.keys(params)
+      //   .map((key) => `${key}=${encodeURIComponent(params[key])}`)
+      //   .join("&")     
+      const response = await axios.post("https://www.paytr.com/odeme/api/get-token", params, {
         headers:
-          { 'content-type': 'application/x-www-form-urlencoded' },
+          { 'content-type': 'application/x-www-form-urlencoded' }
       })
-      
-      setTokenPay(response.data.token);
+
+      if (response.data.status === "success") {
+        setTokenPay(response.data.token);
+      } else {
+        console.log(response.data);
+      }
+     
     } catch (error) {
       console.log(error)
       return { retcode: -10 }
@@ -195,7 +206,7 @@ function Odeme({ ip }) {
   const handlePaymentClick = () => {
     getPaytrIframe();
   };
-
+    console.log("token",tokenPay )
 
   // async function verifyPay(req, res) {
   //   var callback = req.body;
@@ -503,35 +514,39 @@ function Odeme({ ip }) {
                   <button className="btn-three" onClick={handlePaymentClick} >
                     ÖDEME YAP
                     <span className="icon-null" />
-                    
+
                   </button>
-                  
+
               }
             </div>
-            {tokenPay && (
-        <IframeResizer
-          src={`https://www.paytr.com/odeme/guvenli/${tokenPay}`}
-          width="100%"
-          scrolling="omit"
-        />
-      )}
+            {/* {tokenPay ?  ( */}
+              <div style={{ margin: '20px 0' }}>
+              <IframeResizer
+                log
+                inPageLinks
+                src={`https://www.paytr.com/odeme/guvenli/${tokenPay}`}
+                width="100%"
+                scrolling="omit"
+              />
+               </div>
+            {/* ): <p></p>} */}
 
           </div>
         </section>
         {/*End Checkout area*/}
 
       </div>
-      {/* <div>
-        <iframe src="https://www.paytr.com/odeme/guvenli/iframe_token" id="paytriframe"  frameborder="0"
-        scrolling="no" style="width: 100%;"></iframe>
+      {/* <div> */}
+        {/* <iframe src={`https://www.paytr.com/odeme/guvenli/${tokenPay}`} id="paytriframe"  frameborder="0"
+        scrolling="no" ></iframe>
      </div>
       <div style={{ margin: '20px 0' }}>
         <p>deneme</p>
           <IframeResizer
             log
             inPageLinks
-            forwardRef={ref}
-            onResized={onResized}
+            // forwardRef={ref}
+            // onResized={onResized}
             src={`https://www.paytr.com/odeme/guvenli/${tokenPay}`}
             width="100%"
             scrolling="omit"
@@ -548,8 +563,10 @@ export async function getServerSideProps(context) {
 
   const { req } = context;
 
+  // const ip = req['headers']['x-tha-ip'];
+
   if (req.headers['x-forwarded-for']) {
-    ip = req.headers['x-forwarded-for'].split(',')[0];
+    ip = req.headers['x-tha-ip'].split(',')[0];
   } else if (req.headers['x-real-ip']) {
     ip = req.connection.remoteAddress;
   } else {
